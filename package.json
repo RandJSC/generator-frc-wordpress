@@ -1,0 +1,29 @@
+{
+  "name": "generator-frc-wordpress",
+  "version": "0.1.0",
+  "description": "Yeoman generator for custom WordPress themes",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/fifthroom/generator-frc-wordpress.git"
+  },
+  "contributors": [
+    {
+      "name": "Mike Green",
+      "email": "mike@fifthroomcreative.com"
+    }
+  ],
+  "keywords": [
+    "yeoman-generator",
+    "wordpress"
+  ],
+  "dependencies": {
+    "chalk": "^0.5.1",
+    "cheerio": "^0.18.0",
+    "esprima": "^2.0.0",
+    "request": "^2.53.0",
+    "yeoman-generator": "^0.18.8",
+    "yosay": "^1.0.2"
+  },
+  "private": true,
+  "license": "MIT"
+}
