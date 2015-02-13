@@ -17,6 +17,8 @@ var semver     = require('semver');
 var url        = require('url');
 var pkg        = require(path.join(__dirname, '..', 'package.json'));
 
+var COMPOSER_URL = 'https://getcomposer.org/composer.phar';
+
 var helpers    = {
   versionValidator: function(version) {
     if (!semver.valid(version)) {
@@ -236,32 +238,33 @@ module.exports = generators.Base.extend({
         return;
       }
 
-      var dev     = url.parse(this.answers.devUrl);
-      var staging = url.parse(this.answers.stagingUrl);
-      var config  = {
+      var config  = this.config.getAll();
+      var dev     = url.parse(config.devUrl);
+      var staging = url.parse(config.stagingUrl);
+      var secrets = {
         theme: {
-          name: this.answers.themeName,
-          slug: this.answers.slug
+          name: config.themeName,
+          slug: config.slug
         },
         servers: {
           staging: {
             url: staging.hostname,
             rsync: {
               hostname: staging.hostname,
-              username: this.answers.sshUser,
-              path: path.join(this.answers.sshPath, 'wp-content', 'themes', this.answers.slug),
-              port: this.answers.sshPort,
-              public_html: this.answers.sshPath
+              username: config.sshUser,
+              path: path.join(config.sshPath, 'wp-content', 'themes', config.slug),
+              port: config.sshPort,
+              public_html: config.sshPath
             },
             ssh: {
               host: staging.hostname,
-              username: this.answers.sshUser,
-              port: this.answers.sshPort
+              username: config.sshUser,
+              port: config.sshPort
             },
             mysql: {
-              username: this.answers.mysqlUser,
-              password: this.answers.mysqlPassword,
-              database: this.answers.mysqlDB
+              username: config.mysqlUser,
+              password: config.mysqlPassword,
+              database: config.mysqlDB
             }
           },
           dev: {
@@ -281,7 +284,21 @@ module.exports = generators.Base.extend({
         }
       };
 
-      this.fs.writeJSON(this.destinationPath('secrets.json'), config);
+      this.fs.writeJSON(this.destinationPath('secrets.json'), secrets);
+    },
+
+    downloadComposer: function() {
+      if (!this.config.get('composer')) {
+        return;
+      }
+
+      var self = this;
+      var done = this.async();
+
+      request(COMPOSER_URL, function(err, resp, body) {
+        self.fs.write(self.destinationPath('composer.phar'), body);
+        done();
+      });
     }
   }
 
