@@ -77,7 +77,9 @@ module.exports = generators.Base.extend({
 
   prompting: {
     showPrompts: function() {
-      var self = this;
+      var self      = this;
+      var done      = this.async();
+
       var questions = [
         {
           type: 'input',
@@ -90,10 +92,7 @@ module.exports = generators.Base.extend({
           name: 'slug',
           message: 'Please enter a slug for the theme:',
           default: function(answers) {
-            return answers.themeName
-              .toLowerCase()
-              .replace(/[^0-9a-zA-Z\ \-\_]/, '')
-              .replace(/\ /g, '-');
+            return self._.slugify(answers.themeName);
           },
           validate: helpers.characterValidator(/[^0-9a-zA-Z\-\_]/, 'Alphanumeric characters, dashes, and underscores only!')
         },
@@ -167,13 +166,122 @@ module.exports = generators.Base.extend({
           message: 'SSH port:',
           default: 22,
           when: helpers.configureAuth
+        },
+        {
+          type: 'input',
+          name: 'sshUser',
+          message: 'SSH user:',
+          default: 'frcweb',
+          when: helpers.configureAuth
+        },
+        {
+          type: 'input',
+          name: 'sshPath',
+          message: 'Remote site root path:',
+          default: function(answers) {
+            var staging = url.parse(answers.stagingUrl);
+            return path.join('public_html', staging.hostname, 'public');
+          },
+          when: helpers.configureAuth
+        },
+        {
+          type: 'input',
+          name: 'mysqlDB',
+          message: 'Staging MySQL database:',
+          default: function(answers) {
+            return answers.slug.replace('-', '_');
+          },
+          when: helpers.configureAuth
+        },
+        {
+          type: 'input',
+          name: 'mysqlUser',
+          message: 'Staging MySQL user:',
+          default: 'wordpress_dev',
+          when: helpers.configureAuth
+        },
+        {
+          type: 'password',
+          name: 'mysqlPassword',
+          message: 'Staging MySQL password:',
+          when: helpers.configureAuth
         }
-
       ];
+
+      questions = _.map(questions, function(q) {
+        q.store = true;
+        return q;
+      });
 
       this.prompt(questions, function(answers) {
         self.answers = _.assign(self.defaults, answers);
+        done();
       });
+    }
+  },
+
+  configuring: {
+    saveYoRC: function() {
+      var self = this;
+
+      _.forEach(this.answers, function(value, key) {
+        self.config.set(key, value);
+      });
+    }
+  },
+
+  writing: {
+    addSecretsJSON: function() {
+      if (!this.answers.configureAuth) {
+        return;
+      }
+
+      var dev     = url.parse(this.answers.devUrl);
+      var staging = url.parse(this.answers.stagingUrl);
+      var config  = {
+        theme: {
+          name: this.answers.themeName,
+          slug: this.answers.slug
+        },
+        servers: {
+          staging: {
+            url: staging.hostname,
+            rsync: {
+              hostname: staging.hostname,
+              username: this.answers.sshUser,
+              path: path.join(this.answers.sshPath, 'wp-content', 'themes', this.answers.slug),
+              port: this.answers.sshPort,
+              public_html: this.answers.sshPath
+            },
+            ssh: {
+              host: staging.hostname,
+              username: this.answers.sshUser,
+              port: this.answers.sshPort
+            },
+            mysql: {
+              username: this.answers.mysqlUser,
+              password: this.answers.mysqlPassword,
+              database: this.answers.mysqlDB
+            }
+          },
+          dev: {
+            url: dev.hostname + ':' + dev.port,
+            public_html: '/home/vagrant/www',
+            mysql: {
+              username: 'root',
+              password: 'root',
+              database: 'wordpress_dev',
+              host: '127.0.0.1',
+              port: 8889
+            },
+            ssh: {
+              port: 2222
+            }
+          }
+        }
+      };
+
+      this.fs.writeJSON(this.destinationPath('secrets.json'), config);
     }
   }
 
