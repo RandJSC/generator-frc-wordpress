@@ -8,6 +8,7 @@
 'use strict';
 
 var _          = require('lodash');
+var fs         = require('fs');
 var generators = require('yeoman-generator');
 var yosay      = require('yosay');
 var request    = require('request');
@@ -333,6 +334,23 @@ module.exports = generators.Base.extend({
           }
         }
       );
+    }
+  },
+
+  install: {
+    chmodComposer: function() {
+      var self     = this;
+      var done     = this.async();
+      var composer = this.destinationPath('composer.phar');
+
+      fs.exists(composer, function(exists) {
+        if (exists) {
+          self.log(chalk.yellow('Making Composer executable'));
+          fs.chmod(composer, '755', function() {
+            done();
+          });
+        }
+      });
     }
   }
 
