@@ -12,11 +12,169 @@ var generators = require('yeoman-generator');
 var yosay      = require('yosay');
 var request    = require('request');
 var chalk      = require('chalk');
+var path       = require('path');
+var semver     = require('semver');
+var url        = require('url');
+var pkg        = require(path.join(__dirname, '..', 'package.json'));
+
+var helpers    = {
+  versionValidator: function(version) {
+    if (!semver.valid(version)) {
+      return 'Invalid version!';
+    }
+
+    return true;
+  },
+
+  characterValidator: function(pattern, message) {
+    return function(value) {
+      if (_.isUndefined(message)) {
+        message = 'Invalid input!';
+      }
+
+      if (pattern.test(value)) {
+        return message;
+      }
+
+      return true;
+    };
+  },
+
+  urlValidator: function(input) {
+    var parsed = url.parse(input);
+
+    if (!parsed.hostname) {
+      return 'Invalid URL!';
+    }
+
+    return true;
+  },
+
+  configureAuth: function(answers) {
+    return answers.configureAuth;
+  }
+};
 
 module.exports = generators.Base.extend({
 
+  description: pkg.description,
+
+  defaults: {},
+
   constructor: function() {
     generators.Base.apply(this, arguments);
+  },
+
+  initializing: {
+    setPkg: function() {
+      this.pkg = pkg;
+    },
+
+    welcome: function() {
+      this.log(yosay('Welcome to the FRC WordPress generator!'));
+    }
+  },
+
+  prompting: {
+    showPrompts: function() {
+      var self = this;
+      var questions = [
+        {
+          type: 'input',
+          name: 'themeName',
+          message: 'What is the theme\'s name?',
+          default: 'WordPress Theme'
+        },
+        {
+          type: 'input',
+          name: 'slug',
+          message: 'Please enter a slug for the theme:',
+          default: function(answers) {
+            return answers.themeName
+              .toLowerCase()
+              .replace(/[^0-9a-zA-Z\ \-\_]/, '')
+              .replace(/\ /g, '-');
+          },
+          validate: helpers.characterValidator(/[^0-9a-zA-Z\-\_]/, 'Alphanumeric characters, dashes, and underscores only!')
+        },
+        {
+          type: 'input',
+          name: 'themeDescription',
+          message: 'Please enter a short description for the theme:'
+        },
+        {
+          type: 'input',
+          name: 'authors',
+          message: 'Who are the authors?'
+        },
+        {
+          type: 'input',
+          name: 'functionPrefix',
+          message: 'Please enter a short prefix for classes and function names:',
+          default: 'frc',
+          validate: helpers.characterValidator(/[^a-z\_]/, 'Lowercase letters and underscores only!')
+        },
+        {
+          type: 'input',
+          name: 'devUrl',
+          message: 'What is the local development URL?',
+          default: 'http://localhost:8888'
+        },
+        {
+          type: 'input',
+          name: 'stagingUrl',
+          message: 'What is the staging URL?',
+          validate: helpers.urlValidator
+        },
+        {
+          type: 'input',
+          name: 'rubyVersion',
+          message: 'Which version of Ruby should we use?',
+          default: '2.2.0',
+          validate: helpers.versionValidator
+        },
+        {
+          type: 'input',
+          name: 'nodeVersion',
+          message: 'Which Node version should we use?',
+          default: '0.12.0',
+          validate: helpers.versionValidator
+        },
+        {
+          type: 'confirm',
+          name: 'composer',
+          message: 'Install the Composer PHP package manager?',
+          default: false
+        },
+        {
+          type: 'confirm',
+          name: 'configureAuth',
+          message: 'Configure authentication info?',
+          default: true
+        },
+        {
+          type: 'input',
+          name: 'sshHost',
+          message: 'SSH/SFTP hostname:',
+          default: function(answers) {
+            return url.parse(answers.stagingUrl).hostname;
+          },
+          when: helpers.configureAuth
+        },
+        {
+          type: 'input',
+          name: 'sshPort',
+          message: 'SSH port:',
+          default: 22,
+          when: helpers.configureAuth
+        }
+
+      ];
+
+      this.prompt(questions, function(answers) {
+        self.answers = _.assign(self.defaults, answers);
+      });
+    }
   }
 
 });
