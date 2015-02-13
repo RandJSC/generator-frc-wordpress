@@ -287,6 +287,22 @@ module.exports = generators.Base.extend({
       this.fs.writeJSON(this.destinationPath('secrets.json'), secrets);
     },
 
+    rvmConfig: function() {
+      this.fs.copyTpl(
+        this.templatePath('_.versions.conf'),
+        this.destinationPath('.versions.conf'),
+        { version: this.config.get('rubyVersion'), gemset: this.config.get('slug') }
+      );
+    },
+
+    nvmConfig: function() {
+      this.fs.copyTpl(
+        this.templatePath('_.nvmrc'),
+        this.destinationPath('.nvmrc'),
+        { version: this.config.get('nodeVersion') }
+      );
+    },
+
     downloadComposer: function() {
       if (!this.config.get('composer')) {
         return;
