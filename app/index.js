@@ -308,13 +308,31 @@ module.exports = generators.Base.extend({
         return;
       }
 
+      this.log(chalk.green('Downloading Composer...'));
+
       var self = this;
       var done = this.async();
 
       request(COMPOSER_URL, function(err, resp, body) {
+        self.log(chalk.green('Composer downloaded!'));
         self.fs.write(self.destinationPath('composer.phar'), body);
         done();
       });
+    },
+
+    copyPHP: function() {
+      var self = this;
+
+      this.fs.copy(
+        this.templatePath('source/**/*.php'),
+        this.destinationPath('source/'),
+        {
+          process: function(contents) {
+            var template = _.template(contents.toString());
+            return template(self.config.getAll());
+          }
+        }
+      );
     }
   }
 
