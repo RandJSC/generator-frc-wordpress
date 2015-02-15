@@ -16,10 +16,61 @@ var chalk      = require('chalk');
 var path       = require('path');
 var semver     = require('semver');
 var url        = require('url');
+var iniparser  = require('iniparser');
 var helpers    = require('./lib/helpers');
 var pkg        = require(path.join(__dirname, '..', 'package.json'));
 
 var COMPOSER_URL = 'https://getcomposer.org/composer.phar';
+
+var devDependencies = [
+  'browserify',
+  'browserify-shim',
+  'chalk',
+  'del',
+  'exorcist',
+  'glob',
+  'gulp',
+  'gulp-browserify',
+  'gulp-bump',
+  'gulp-cache',
+  'gulp-changed',
+  'gulp-concat',
+  'gulp-filter',
+  'gulp-gzip',
+  'gulp-helptext',
+  'gulp-if',
+  'gulp-imagemin',
+  'gulp-insert',
+  'gulp-jshint',
+  'gulp-load-plugins',
+  'gulp-pleeease',
+  'gulp-print',
+  'gulp-rename',
+  'gulp-ruby-sass',
+  'gulp-shell',
+  'gulp-size',
+  'gulp-sourcemaps',
+  'gulp-uglifyjs',
+  'gulp-util',
+  'gulp-zip',
+  'handlebars',
+  'imagemin-pngcrush',
+  'jshint-stylish',
+  'lodash',
+  'lodash.some',
+  'map-stream',
+  'node-notifier',
+  'opn',
+  'psi',
+  'require-dir',
+  'run-sequence',
+  'semver',
+  'vinyl-transform'
+];
+
+var productionDependencies = [
+
+];
 
 module.exports = generators.Base.extend({
 
@@ -78,6 +129,34 @@ module.exports = generators.Base.extend({
           message: 'Please enter a short prefix for classes and function names:',
           default: 'frc',
           validate: helpers.characterValidator(/[^a-z\_]/, 'Lowercase letters and underscores only!')
+        },
+        {
+          type: 'confirm',
+          name: 'initRepo',
+          message: 'Initialize a Git repo here?',
+          default: true
+        },
+        {
+          type: 'input',
+          name: 'repoUrl',
+          message: 'What is the theme\'s Git repo URL?',
+          default: function() {
+            var gitConfig = self.destinationPath('.git/config');
+
+            if (!fs.existsSync(gitConfig)) {
+              return null;
+            }
+
+            var config    = iniparser.parseSync(gitConfig);
+            var hasRemote = config.hasOwnProperty('remote "origin"');
+
+            if (hasRemote) {
+              return config['remote "origin"'].url;
+            }
+
+            return null;
+          },
+          when: function(answers) { return answers.initRepo; }
         },
         {
           type: 'input',
@@ -197,6 +276,42 @@ module.exports = generators.Base.extend({
   },
 
   writing: {
+    initGitRepo: function() {
+      var self   = this;
+      var config = this.config.getAll();
+
+      if (!config.initRepo) {
+        return;
+      }
+
+      this.log(chalk.magenta('Initializing Git repo'));
+
+      var done = this.async();
+      var git  = this.spawnCommand('git', [ 'init' ]);
+
+      git.on('close', function(code) {
+        self.log(chalk.green('Done'));
+
+        self.fs.copy(
+          self.templatePath('_.gitignore'),
+          self.destinationPath('.gitignore')
+        );
+
+        if (config.repoUrl) {
+          self.log(chalk.magenta('Setting remote repo URL'));
+
+          var remote = self.spawnCommand('git', [ 'remote', 'add', 'origin', config.repoUrl ]);
+
+          remote.on('close', function(code) {
+            self.log(chalk.green('Done'));
+            done();
+          });
+        } else {
+          done();
+        }
+      });
+    },
+
     addSecretsJSON: function() {
       if (!this.answers.configureAuth) {
         return;
@@ -249,6 +364,27 @@ module.exports = generators.Base.extend({
       };
 
       this.fs.writeJSON(this.destinationPath('secrets.json'), secrets);
+    },
+
+    addPackageJSON: function() {
+      var config = this.config.getAll();
+      var pkg    = {
+        name: config.slug,
+        version: '0.1.0',
+        description: config.themeDescription,
+        private: true,
+        devDependencies: {},
+        dependencies: {}
+      };
+
+      if (config.repoUrl) {
+        pkg.repository = {
+          type: 'git',
+          url: config.repoUrl
+        };
+      }
+
+      this.fs.writeJSON(this.destinationPath('package.json'), pkg);
     },
 
     rvmConfig: function() {
@@ -314,7 +450,18 @@ module.exports = generators.Base.extend({
           });
         }
       });
+    },
+
+    npmDev: function() {
+      this.log(chalk.magenta('Installing development packages'));
+
+      this.npmInstall(devDependencies, { saveDev: true });
+    },
+
+    npmProduction: function() {
+      this.log(chalk.magenta('Installing production packages'));
     }
+
   }
 
 });

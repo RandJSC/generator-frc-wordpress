@@ -1,0 +1,16 @@
+.DS_Store
+*.swp
+*.swo
+*~
+/build
+/node_modules
+/.vagrant*
+/.sass-cache
+/bower_components
+/dist
+/Session.vim
+/doc
+/plugins
+/uploads
+.vim_librarian
+/npm-debug.log

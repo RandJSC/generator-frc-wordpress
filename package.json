@@ -20,6 +20,7 @@
     "chalk": "^0.5.1",
     "cheerio": "^0.18.0",
     "esprima": "^2.0.0",
+    "iniparser": "^1.0.5",
     "lodash": "^3.1.0",
     "request": "^2.53.0",
     "semver": "^4.3.0",
