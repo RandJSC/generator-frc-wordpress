@@ -112,7 +112,8 @@ module.exports = generators.Base.extend({
           type: 'input',
           name: 'themeName',
           message: 'What is the theme\'s name?',
-          default: 'WordPress Theme'
+          default: 'WordPress Theme',
+          store: true
         },
         {
           type: 'input',
@@ -121,30 +122,35 @@ module.exports = generators.Base.extend({
           default: function(answers) {
             return self._.slugify(answers.themeName);
           },
-          validate: helpers.characterValidator(/[^0-9a-zA-Z\-\_]/, 'Alphanumeric characters, dashes, and underscores only!')
+          validate: helpers.characterValidator(/[^0-9a-zA-Z\-\_]/, 'Alphanumeric characters, dashes, and underscores only!'),
+          store: true
         },
         {
           type: 'input',
           name: 'themeDescription',
-          message: 'Please enter a short description for the theme:'
+          message: 'Please enter a short description for the theme:',
+          store: true
         },
         {
           type: 'input',
           name: 'authors',
-          message: 'Who are the authors?'
+          message: 'Who are the authors?',
+          store: true
         },
         {
           type: 'input',
           name: 'functionPrefix',
           message: 'Please enter a short prefix for classes and function names:',
           default: 'frc',
-          validate: helpers.characterValidator(/[^a-z\_]/, 'Lowercase letters and underscores only!')
+          validate: helpers.characterValidator(/[^a-z\_]/, 'Lowercase letters and underscores only!'),
+          store: true
         },
         {
           type: 'confirm',
           name: 'initRepo',
           message: 'Initialize a Git repo here?',
-          default: true
+          default: true,
+          store: true
         },
         {
           type: 'input',
@@ -166,45 +172,52 @@ module.exports = generators.Base.extend({
 
             return null;
           },
-          when: function(answers) { return answers.initRepo; }
+          when: function(answers) { return answers.initRepo; },
+          store: true
         },
         {
           type: 'input',
           name: 'devUrl',
           message: 'What is the local development URL?',
-          default: 'http://localhost:8888'
+          default: 'http://localhost:8888',
+          store: true
         },
         {
           type: 'input',
           name: 'stagingUrl',
           message: 'What is the staging URL?',
-          validate: helpers.urlValidator
+          validate: helpers.urlValidator,
+          store: true
         },
         {
           type: 'input',
           name: 'rubyVersion',
           message: 'Which version of Ruby should we use?',
           default: '2.2.0',
-          validate: helpers.versionValidator
+          validate: helpers.versionValidator,
+          store: true
         },
         {
           type: 'input',
           name: 'nodeVersion',
           message: 'Which Node version should we use?',
           default: '0.12.0',
-          validate: helpers.versionValidator
+          validate: helpers.versionValidator,
+          store: true
         },
         {
           type: 'confirm',
           name: 'composer',
           message: 'Install the Composer PHP package manager?',
-          default: false
+          default: false,
+          store: true
         },
         {
           type: 'confirm',
           name: 'vagrant',
           message: 'Create & configure a Vagrant instance?',
-          default: true
+          default: true,
+          store: true
         },
         {
           type: 'confirm',
@@ -213,13 +226,15 @@ module.exports = generators.Base.extend({
           default: true,
           when: function(answers) {
             return answers.vagrant;
-          }
+          },
+          store: true
         },
         {
           type: 'confirm',
           name: 'configureAuth',
           message: 'Configure authentication info?',
-          default: true
+          default: true,
+          store: true
         },
         {
           type: 'input',
@@ -228,21 +243,24 @@ module.exports = generators.Base.extend({
           default: function(answers) {
             return url.parse(answers.stagingUrl).hostname;
           },
-          when: helpers.configureAuth
+          when: helpers.configureAuth,
+          store: true
         },
         {
           type: 'input',
           name: 'sshPort',
           message: 'SSH port:',
           default: 22,
-          when: helpers.configureAuth
+          when: helpers.configureAuth,
+          store: true
         },
         {
           type: 'input',
           name: 'sshUser',
           message: 'SSH user:',
           default: 'frcweb',
-          when: helpers.configureAuth
+          when: helpers.configureAuth,
+          store: true
         },
         {
           type: 'input',
@@ -252,7 +270,8 @@ module.exports = generators.Base.extend({
             var staging = url.parse(answers.stagingUrl);
             return path.join('public_html', staging.hostname, 'public');
           },
-          when: helpers.configureAuth
+          when: helpers.configureAuth,
+          store: true
         },
         {
           type: 'input',
@@ -261,27 +280,25 @@ module.exports = generators.Base.extend({
           default: function(answers) {
             return answers.slug.replace('-', '_');
           },
-          when: helpers.configureAuth
+          when: helpers.configureAuth,
+          store: true
         },
         {
           type: 'input',
           name: 'mysqlUser',
           message: 'Staging MySQL user:',
           default: 'wordpress_dev',
-          when: helpers.configureAuth
+          when: helpers.configureAuth,
+          store: true
         },
         {
           type: 'password',
           name: 'mysqlPassword',
           message: 'Staging MySQL password:',
-          when: helpers.configureAuth
+          when: helpers.configureAuth,
+          store: true
         }
       ];
-
-      questions = _.map(questions, function(q) {
-        q.store = true;
-        return q;
-      });
 
       this.prompt(questions, function(answers) {
         self.answers = _.assign(self.defaults, answers);
