@@ -69,7 +69,17 @@ var devDependencies = [
 ];
 
 var productionDependencies = [
-
+  'bragi-browser',
+  'fastclick',
+  'font-awesome',
+  'hammerjs',
+  'handlebars',
+  'imagesloaded',
+  'jquery',
+  'lodash',
+  'q',
+  'spin.js',
+  'slick-carousel'
 ];
 
 module.exports = generators.Base.extend({
@@ -460,6 +470,8 @@ module.exports = generators.Base.extend({
 
     npmProduction: function() {
       this.log(chalk.magenta('Installing production packages'));
+
+      this.npmInstall(productionDependencies, { save: true });
     }
 
   }
