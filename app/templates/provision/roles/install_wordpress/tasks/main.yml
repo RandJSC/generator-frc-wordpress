@@ -1,0 +1,29 @@
+---
+- name: create database
+  mysql_db: name=wordpress_dev state=present login_user=root login_password=root
+
+- name: add mysql remote user
+  mysql_user: name=root password=root host=% state=present login_user=root login_password=root priv=*.*:ALL
+
+- name: download wordpress
+  command: "wget http://wordpress.org/latest.tar.gz -O /tmp/latest.tar.gz creates=/tmp/latest.tar.gz"
+  sudo: yes
+  register: wp_download
+
+- name: extract wordpress
+  command: tar xvzf /tmp/latest.tar.gz chdir=/tmp creates=/tmp/wordpress
+  sudo: yes
+  when: wp_download|success
+  register: wp_extract
+
+- name: copy wordpress
+  command: rsync -azr /tmp/wordpress/ /home/vagrant/www/ creates=/home/vagrant/www/wp-includes
+  sudo: yes
+  when: wp_extract|success
+
+- name: chown wordpress
+  command: chown -R vagrant:vagrant /home/vagrant/www
+  sudo: yes
+
+- name: add wp-config
+  template: src=wp-config.j2 dest=/home/vagrant/www/wp-config.php
