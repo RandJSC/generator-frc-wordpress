@@ -202,6 +202,21 @@ module.exports = generators.Base.extend({
         },
         {
           type: 'confirm',
+          name: 'vagrant',
+          message: 'Create & configure a Vagrant instance?',
+          default: true
+        },
+        {
+          type: 'confirm',
+          name: 'vagrantUp',
+          message: 'Start the Vagrant instance when we\'re done here?',
+          default: true,
+          when: function(answers) {
+            return answers.vagrant;
+          }
+        },
+        {
+          type: 'confirm',
           name: 'configureAuth',
           message: 'Configure authentication info?',
           default: true
@@ -430,6 +445,21 @@ module.exports = generators.Base.extend({
       });
     },
 
+    copyProvisioning: function() {
+      this.fs.copy(
+        this.templatePath('provision/**/*'),
+        this.destinationPath('provision/')
+      );
+    },
+
+    copyVagrantfile: function() {
+      this.fs.copyTpl(
+        this.templatePath('_Vagrantfile'),
+        this.destinationPath('Vagrantfile'),
+        { slug: this.config.get('slug') }
+      );
+    },
+
     copySource: function() {
       var self   = this;
       var config = this.config.getAll();
@@ -473,6 +503,30 @@ module.exports = generators.Base.extend({
       this.log(chalk.magenta('Installing production packages'));
 
       this.npmInstall(productionDependencies, { save: true });
+    }
+
+  },
+
+  end: {
+
+    vagrantUp: function() {
+      if (this.config.get('vagrant') && this.config.get('vagrantUp')) {
+        this.log(chalk.magenta('Spinning up Vagrant instance...'));
+
+        var self    = this;
+        var done    = this.async();
+        var vagrant = this.spawnCommand('vagrant', [ 'up' ]);
+
+        vagrant.on('close', function(code) {
+          self.log(chalk.green('Done'));
+          done();
+        });
+      }
+    },
+
+    goodbye: function() {
+      this.log(chalk.bold(chalk.green('Your theme is ready. Go write some code!')));
+      this.log(yosay('Thanks for using the FRC theme generator!'));
     }
 
   }
