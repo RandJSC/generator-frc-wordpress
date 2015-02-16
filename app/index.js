@@ -460,6 +460,13 @@ module.exports = generators.Base.extend({
       );
     },
 
+    copyGemfile: function() {
+      this.fs.copy(
+        this.templatePath('_Gemfile'),
+        this.destinationPath('Gemfile')
+      );
+    },
+
     copySource: function() {
       var self   = this;
       var config = this.config.getAll();
@@ -503,6 +510,19 @@ module.exports = generators.Base.extend({
       this.log(chalk.magenta('Installing production packages'));
 
       this.npmInstall(productionDependencies, { save: true });
+    },
+
+    bundleInstall: function() {
+      var self   = this;
+      var done   = this.async();
+      var bundle = this.spawnCommand('bundle', [ 'install' ]);
+
+      this.log(chalk.magenta('Installing Ruby dependencies...'));
+
+      bundle.on('close', function() {
+        self.log(chalk.green('Done'));
+        done();
+      });
     }
 
   },
