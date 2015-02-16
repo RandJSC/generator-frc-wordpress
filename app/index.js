@@ -430,16 +430,17 @@ module.exports = generators.Base.extend({
       });
     },
 
-    copyPHP: function() {
-      var self = this;
+    copySource: function() {
+      var self   = this;
+      var config = this.config.getAll();
 
       this.fs.copy(
-        this.templatePath('source/**/*.php'),
+        this.templatePath('source/**/*'),
         this.destinationPath('source/'),
         {
           process: function(contents) {
             var template = _.template(contents.toString());
-            return template(self.config.getAll());
+            return template(config);
           }
         }
       );
