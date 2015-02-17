@@ -2,13 +2,19 @@
  * Image Build Tasks
  */
 
-var path     = require('path');
-var config   = require(path.join(__dirname, '..', 'config'));
-var secrets  = require(path.join(__dirname, '..', '..', 'secrets.json'));
-var helpers  = require(path.join(__dirname, '..', 'lib', 'helpers'));
-var gulp     = require('gulp');
-var $        = require('gulp-load-plugins')({ lazy: true });
-var pngcrush = require('imagemin-pngcrush');
+/* jshint node: true */
+
+'use strict';
+
+var path        = require('path');
+var config      = require(path.join(__dirname, '..', 'config'));
+var secrets     = require(path.join(__dirname, '..', '..', 'secrets.json'));
+var helpers     = require(path.join(__dirname, '..', 'lib', 'helpers'));
+var chalk       = require('chalk');
+var gulp        = require('gulp');
+var $           = require('gulp-load-plugins')({ lazy: true });
+var pngcrush    = require('imagemin-pngcrush');
+var runSequence = require('run-sequence').use(gulp);
 
 gulp.task('images', function(cb) {
   runSequence('images:vendor', 'images:optimize', cb);
