@@ -61,6 +61,10 @@ helpers.shell = function(command, bindings, shellOpts) {
     shellOpts = {};
   }
 
+  if (_.isArray(command)) {
+    command = command.join(' ');
+  }
+
   bindings  = _.assign({ dev: dev, staging: staging }, bindings);
   shellOpts = _.assign({ templateData: bindings }, shellOpts);
 

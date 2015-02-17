@@ -379,7 +379,7 @@ module.exports = generators.Base.extend({
               public_html: config.sshPath
             },
             ssh: {
-              host: staging.hostname,
+              hostname: staging.hostname,
               username: config.sshUser,
               port: config.sshPort
             },
