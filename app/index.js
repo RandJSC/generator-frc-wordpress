@@ -498,6 +498,27 @@ module.exports = generators.Base.extend({
           }
         }
       );
+    },
+
+    copyBuildSystem: function() {
+      var config = this.config.getAll();
+
+      this.fs.copyTpl(
+        this.templatePath('_gulpfile.js'),
+        this.destinationPath('gulpfile.js'),
+        config
+      );
+
+      this.fs.copy(
+        this.templatePath('gulp/**/*'),
+        this.destinationPath('gulp/'),
+        {
+          process: function(content) {
+            var template = _.template(content.toString());
+            return template(config);
+          }
+        }
+      );
     }
   },
 
@@ -546,19 +567,37 @@ module.exports = generators.Base.extend({
 
   end: {
 
+    runGulp: function() {
+      this.log(chalk.magenta('Running Gulp for the first time...'));
+
+      var self = this;
+      var done = this.async();
+      var gulp = this.spawnCommand('gulp', [ 'default' ]);
+
+      gulp.on('close', function(code) {
+        self.log(chalk.green('Done'));
+        done();
+      });
+    },
+
     vagrantUp: function() {
-      if (this.config.get('vagrant') && this.config.get('vagrantUp')) {
-        this.log(chalk.magenta('Spinning up Vagrant instance...'));
+      var vagrantfile = this.destinationPath('Vagrantfile');
+      var spinUp      = fs.existsSync(vagrantfile) && this.config.get('vagrantUp');
 
-        var self    = this;
-        var done    = this.async();
-        var vagrant = this.spawnCommand('vagrant', [ 'up' ]);
-
-        vagrant.on('close', function(code) {
-          self.log(chalk.green('Done'));
-          done();
-        });
+      if (!spinUp) {
+        return;
       }
+
+      this.log(chalk.magenta('Spinning up Vagrant instance...'));
+
+      var self    = this;
+      var done    = this.async();
+      var vagrant = this.spawnCommand('vagrant', [ 'up' ]);
+
+      vagrant.on('close', function(code) {
+        self.log(chalk.green('Done'));
+        done();
+      });
     },
 
     goodbye: function() {
