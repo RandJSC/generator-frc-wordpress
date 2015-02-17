@@ -1,5 +1,4 @@
 /**
- * <%= themeName %>
  * Gulp Configuration
  */
 
@@ -15,6 +14,8 @@ var build = './build';
 var production = !gutil.env.dev;
 
 module.exports = {
+  src: src,
+  build: build,
   resources: {
     scss: path.join(src, 'css', '**', '*.scss'),
     images: path.join(src, 'img', '**', '*.{png,jpg,jpeg,gif,svg}'),

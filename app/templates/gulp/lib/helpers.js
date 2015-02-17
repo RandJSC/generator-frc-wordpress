@@ -1,5 +1,4 @@
 /**
- * <%= themeName %>
  * Gulp Build Helpers
  */
 

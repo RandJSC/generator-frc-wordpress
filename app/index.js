@@ -56,6 +56,7 @@ var devDependencies = [
   'handlebars',
   'imagemin-pngcrush',
   'jshint-stylish',
+  'lazypipe',
   'lodash',
   'lodash.some',
   'map-stream',
@@ -511,13 +512,7 @@ module.exports = generators.Base.extend({
 
       this.fs.copy(
         this.templatePath('gulp/**/*'),
-        this.destinationPath('gulp/'),
-        {
-          process: function(content) {
-            var template = _.template(content.toString());
-            return template(config);
-          }
-        }
+        this.destinationPath('gulp/')
       );
     }
   },
