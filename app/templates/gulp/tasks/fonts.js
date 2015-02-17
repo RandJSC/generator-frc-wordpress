@@ -14,16 +14,10 @@ var chalk       = require('chalk');
 var gulp        = require('gulp');
 var $           = require('gulp-load-plugins')({ lazy: true });
 var runSequence = require('run-sequence');
-var lazypipe    = require('lazypipe');
+var pipelines   = require(path.join(__dirname, '..', 'lib', 'pipelines'));
 
-var gzipChannel = lazypipe()
-  .pipe(gulp.dest, path.join(config.build, 'fonts'))
-  .pipe(function() {
-    return $.if(config.production, $.gzip());
-  })
-  .pipe(function() {
-    return $.if(config.production, gulp.dest(path.join(config.build, 'fonts')));
-  });
+var output         = path.join(config.build, 'fonts');
+var productionGzip = pipelines.productionGzip(output);
 
 gulp.task('fonts', function(cb) {
   runSequence('fonts:vendor', 'fonts:copy', cb);
@@ -36,10 +30,12 @@ gulp.task('fonts:vendor', function(cb) {
   }
 
   return gulp.src(config.resources.vendorFonts)
-    .pipe(gzipChannel());
+    .pipe(gulp.dest(path.join(output)))
+    .pipe(productionGzip());
 });
 
 gulp.task('fonts:copy', function() {
   return gulp.src(config.resources.fonts)
-    .pipe(gzipChannel());
+    .pipe(gulp.dest(output))
+    .pipe(productionGzip());
 });
