@@ -529,6 +529,8 @@ module.exports = generators.Base.extend({
           fs.chmod(composer, '755', function() {
             done();
           });
+        } else {
+          done();
         }
       });
     },
