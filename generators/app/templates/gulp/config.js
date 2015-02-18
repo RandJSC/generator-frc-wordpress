@@ -27,11 +27,11 @@ module.exports = {
     vendorFonts: [
       path.join('node_modules', 'font-awesome', 'fonts', '*')
     ],
-    json: {
-      theme: 'theme.json',
-      package: 'package.json',
-      composer: 'composer.json'
-    },
+    json: [
+      'theme.json',
+      'package.json',
+      'composer.json'
+    ],
     misc: [
       path.join(src, '*'),
       '!source/*.php',
