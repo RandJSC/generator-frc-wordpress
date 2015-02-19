@@ -66,6 +66,8 @@ var devDependencies = [
   'require-dir',
   'run-sequence',
   'semver',
+  'vinyl-buffer',
+  'vinyl-source-stream',
   'vinyl-transform'
 ];
 
