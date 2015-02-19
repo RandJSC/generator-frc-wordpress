@@ -1,0 +1,7 @@
+<?php
+/**
+ * <%= themeName %>
+ * Shortcode Functions
+ */
+
+

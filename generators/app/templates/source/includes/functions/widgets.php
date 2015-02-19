@@ -1,0 +1,6 @@
+<?php
+/**
+ * <%= themeName %>
+ * Widget Registration
+ */
+

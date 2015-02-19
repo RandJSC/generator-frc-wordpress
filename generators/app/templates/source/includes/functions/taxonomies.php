@@ -1,0 +1,6 @@
+<?php
+/**
+ * <%= themeName %>
+ * Custom Taxonomies
+ */
+

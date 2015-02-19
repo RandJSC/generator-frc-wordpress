@@ -1,0 +1,6 @@
+<?php
+/**
+ * <%= themeName %>
+ * Utility Functions
+ */
+

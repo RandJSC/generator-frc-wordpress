@@ -80,6 +80,8 @@ var productionDependencies = [
   'imagesloaded',
   'jquery',
   'lodash',
+  'lodash.assign',
+  'lodash.some',
   'q',
   'spin.js',
   'slick-carousel'

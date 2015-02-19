@@ -21,4 +21,3 @@ include $functions . 'styles.php';
 include $functions . 'theme-support.php';
 include $functions . 'widgets.php';
 include $functions . 'excerpts.php';
-?>
