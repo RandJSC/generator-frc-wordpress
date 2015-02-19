@@ -18,7 +18,7 @@ var semver     = require('semver');
 var url        = require('url');
 var iniparser  = require('iniparser');
 var helpers    = require('./lib/helpers');
-var pkg        = require(path.join(__dirname, '..', 'package.json'));
+var pkg        = require(path.join(__dirname, '..', '..', 'package.json'));
 
 var COMPOSER_URL = 'https://getcomposer.org/composer.phar';
 
