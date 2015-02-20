@@ -41,7 +41,13 @@ gulp.task('config', function(cb) {
 gulp.task('default', function(cb) {
   return runSequence(
     'clean',
-    'config',
+    'copy',
+    'fonts',
+    'styles',
+    'scripts',
+    'images',
+    'php',
+    'totalsize',
     cb
   );
 });

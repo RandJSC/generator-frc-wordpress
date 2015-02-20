@@ -7,6 +7,7 @@
 'use strict';
 
 var path        = require('path');
+var root        = path.join(__dirname, '..', '..');
 var config      = require(path.join(__dirname, '..', 'config'));
 var secrets     = require(path.join(__dirname, '..', '..', 'secrets.json'));
 var helpers     = require(path.join(__dirname, '..', 'lib', 'helpers'));
@@ -19,11 +20,16 @@ var output         = path.join(config.build, 'css');
 var productionGzip = pipelines.productionGzip(output);
 
 gulp.task('styles', function() {
-  return gulp.src(config.resources.scss)
-    .pipe(helpers.log(chalk.yellow('Compiling SCSS')))
-    .pipe($.rubySass(config.sass))
-    .on('error', helpers.handleError)
-    .pipe(gulp.dest(output))
-    .pipe(productionGzip())
-    .pipe($.size({ title: 'scss' }));
+  return $.rubySass(path.join(root, 'source', 'css/'), {
+    precision: 10,
+    style: config.production ? 'compressed' : 'expanded',
+    lineNumbers: !config.production,
+    loadPath: [
+      path.join(root, 'node_modules'),
+      path.join(root, 'source', 'css')
+    ].join(':')
+  })
+  .on('error', helpers.handleError)
+  .pipe(productionGzip())
+  .pipe($.size({ title: 'scss' }));
 });

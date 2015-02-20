@@ -6,6 +6,7 @@
 
 'use strict';
 
+var fs          = require('fs');
 var path        = require('path');
 var root        = path.join(__dirname, '..', '..');
 var config      = require(path.join(root, 'gulp', 'config'));
@@ -15,7 +16,17 @@ var $           = require('gulp-load-plugins')({ lazy: true });
 var runSequence = require('run-sequence');
 
 gulp.task('php', function(cb) {
-  runSequence('php:copy', 'php:composer', cb);
+  var tasks = [ 'php:copy' ];
+
+  <% if (composer) { %>
+    if (fs.existsSync(path.join(root, 'composer.json'))) {
+      tasks.push('php:composer');
+    }
+  <% } %>
+
+  tasks.push(cb);
+
+  runSequence.apply(this, tasks);
 });
 
 gulp.task('php:copy', function() {

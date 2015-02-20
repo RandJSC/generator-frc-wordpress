@@ -33,8 +33,10 @@ module.exports = {
       'composer.json'
     ],
     misc: [
-      path.join(src, '*'),
+      'source/*',
       '!source/*.php',
+      '!source/**/*.scss',
+      '!source/js/lib/*.js',
       './theme.json'
     ]
   },
