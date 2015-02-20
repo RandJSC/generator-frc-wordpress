@@ -323,6 +323,21 @@ module.exports = generators.Base.extend({
   },
 
   writing: {
+    stubRequiredFolders: function() {
+      var self    = this;
+      var folders = [ 'build', 'uploads', 'plugins' ];
+      var count   = folders.length;
+      var done    = this.async();
+
+      _.forEach(folders, function(folder, index) {
+        fs.mkdir(self.destinationPath(folder), function(err) {
+          self.log(chalk.green('mkdir') + '\t' + folder);
+          if (index === (count - 1)) {
+            done();
+          }
+        });
+      });
+    },
     initGitRepo: function() {
       var self   = this;
       var config = this.config.getAll();
@@ -514,9 +529,16 @@ module.exports = generators.Base.extend({
         config
       );
 
+      // [ todo ] - change template delimiters for things that should be compiled on copy vs. things that are runtime templates used by gulp in the project
       this.fs.copy(
         this.templatePath('gulp/**/*'),
-        this.destinationPath('gulp/')
+        this.destinationPath('gulp/'),
+        {
+          process: function(content) {
+            var tpl = _.template(content.toString(), { interpolate: /{{([\s\S]+?)}}/g });
+            return tpl(config);
+          }
+        }
       );
     }
   },
