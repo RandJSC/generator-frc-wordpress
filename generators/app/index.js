@@ -283,7 +283,7 @@ module.exports = generators.Base.extend({
           name: 'mysqlDB',
           message: 'Staging MySQL database:',
           default: function(answers) {
-            return answers.slug.replace('-', '_');
+            return answers.slug.replace(/\-/g, '_');
           },
           when: helpers.configureAuth,
           store: true

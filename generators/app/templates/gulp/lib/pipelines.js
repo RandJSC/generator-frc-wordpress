@@ -32,7 +32,7 @@ module.exports = {
       .pipe(buffer)
       .pipe($.sourcemaps.init, { loadMaps: true })
       .pipe(function() {
-        return $.if(config.production, $.uglify());
+        return $.if(config.production, $.uglifyjs());
       })
       .pipe($.sourcemaps.write, output)
       .pipe(gulp.dest, output)
