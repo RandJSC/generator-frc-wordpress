@@ -16,6 +16,17 @@ var path       = require('path');
 var inflect    = require('inflect');
 
 module.exports = generators.Base.extend({
+
+  visibilityChoices: [
+    'public',
+    'exclude_from_search',
+    'publicly_queryable',
+    'show_in_nav_menus',
+    'show_ui',
+    'show_in_menu',
+    'show_in_admin_bar'
+  ],
+
   description: 'Create a new custom post type',
 
   constructor: function() {
@@ -74,15 +85,7 @@ module.exports = generators.Base.extend({
         type: 'checkbox',
         name: 'visibilityOpts',
         message: 'Visibility options:',
-        choices: [
-          'public',
-          'exclude_from_search',
-          'publicly_queryable',
-          'show_in_nav_menus',
-          'show_ui',
-          'show_in_menu',
-          'show_in_admin_bar'
-        ],
+        choices: this.visibilityChoices,
         default: [
           'public',
           'publicly_queryable',
@@ -108,10 +111,21 @@ module.exports = generators.Base.extend({
 
   writing: {
     registerPostType: function() {
+      var self        = this;
       var savedConfig = this.config.getAll();
       var tplVars     = _.assign(savedConfig, this.answers, {
-        name: this.name
+        name: this.name,
+        underscoreName: this._.str.underscored(this.name)
       });
+
+      tplVars.supports = _.map(tplVars.supports, function(item) {
+        return '\'' + item + '\'';
+      });
+
+      _.forEach(this.visibilityChoices, function(choice) {
+        tplVars[choice] = _.include(self.answers.visibilityOpts, choice);
+      });
+
       var cptInclude  = this.destinationPath('source/includes/functions/post-types.php');
       var cptContent  = this.fs.read(cptInclude);
       var template    = _.template(
@@ -121,9 +135,19 @@ module.exports = generators.Base.extend({
       );
       cptContent     += template(tplVars);
 
-      this.log(cptContent);
+      this.log(chalk.magenta('Appending post type to ' + path.basename(cptInclude)));
 
-      //this.fs.write(cptInclude, cptContent);
+      this.fs.write(cptInclude, cptContent);
+    },
+
+    addMetabox: function() {
+      var metaboxFile = this.destinationPath('source/piklist/parts/meta-boxes/' + this.name + '-fields.php');
+      var tplFile     = this.templatePath('_metabox.php');
+      var tplVars     = _.assign(this.config.getAll(), this.answers, {
+        name: this.name
+      });
+
+      this.fs.copyTpl(tplFile, metaboxFile, tplVars);
     }
   }
 });
