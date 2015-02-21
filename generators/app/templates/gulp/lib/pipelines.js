@@ -38,7 +38,7 @@ pipelines.javascript = function(filename) {
       return $.if(config.production, $.uglifyjs());
     })
     .pipe($.sourcemaps.write, output)
-    .pipe(pipelines.productionGzip(output)());
+    .pipe(pipelines.productionGzip(output));
 };
 
 module.exports = pipelines;

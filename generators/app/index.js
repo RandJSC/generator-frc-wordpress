@@ -302,6 +302,22 @@ module.exports = generators.Base.extend({
           message: 'Staging MySQL password:',
           when: helpers.configureAuth,
           store: true
+        },
+        {
+          type: 'confirm',
+          name: 'syncPlugins',
+          message: 'Download plugins from staging?',
+          default: true,
+          when: helpers.configureAuth,
+          store: true
+        },
+        {
+          type: 'confirm',
+          name: 'syncUploads',
+          message: 'Download uploads from staging?',
+          default: true,
+          when: helpers.configureAuth,
+          store: true
         }
       ];
 
@@ -529,16 +545,9 @@ module.exports = generators.Base.extend({
         config
       );
 
-      // [ todo ] - change template delimiters for things that should be compiled on copy vs. things that are runtime templates used by gulp in the project
       this.fs.copy(
         this.templatePath('gulp/**/*'),
-        this.destinationPath('gulp/'),
-        {
-          process: function(content) {
-            var tpl = _.template(content.toString(), { interpolate: /{{([\s\S]+?)}}/g });
-            return tpl(config);
-          }
-        }
+        this.destinationPath('gulp/')
       );
     }
   },
@@ -593,8 +602,19 @@ module.exports = generators.Base.extend({
     runGulp: function() {
       this.log(chalk.magenta('Running Gulp for the first time...'));
 
-      var self = this;
-      var done = this.async();
+      var self   = this;
+      var done   = this.async();
+      var config = this.config.getAll();
+      var args   = [ 'default' ];
+
+      if (config.syncPlugins) {
+        args.push('plugins:down');
+      }
+
+      if (config.syncUploads) {
+        args.push('uploads:down');
+      }
+
       var gulp = this.spawnCommand('gulp', [ 'default' ]);
 
       gulp.on('close', function(code) {

@@ -29,5 +29,5 @@ gulp.task('scripts:main', function() {
     debug: !config.production
   });
 
-  return bundler.bundle().pipe(pipelines.javascript('main.js'));
+  return bundler.bundle().pipe(pipelines.javascript('main.js')());
 });

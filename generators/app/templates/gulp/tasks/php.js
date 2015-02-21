@@ -18,11 +18,9 @@ var runSequence = require('run-sequence');
 gulp.task('php', function(cb) {
   var tasks = [ 'php:copy' ];
 
-  <% if (composer) { %>
-    if (fs.existsSync(path.join(root, 'composer.json'))) {
-      tasks.push('php:composer');
-    }
-  <% } %>
+  if (fs.existsSync(path.join(root, 'composer.phar')) && fs.existsSync(path.join(root, 'composer.json'))) {
+    tasks.push('php:composer');
+  }
 
   tasks.push(cb);
 
