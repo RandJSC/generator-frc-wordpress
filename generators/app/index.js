@@ -25,6 +25,7 @@ var COMPOSER_URL = 'https://getcomposer.org/composer.phar';
 var devDependencies = [
   'browserify',
   'browserify-shim',
+  'browser-sync',
   'chalk',
   'del',
   'exorcist',

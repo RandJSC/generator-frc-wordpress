@@ -21,6 +21,8 @@ var pngcrush    = require('imagemin-pngcrush');
 var exorcist    = require('exorcist');
 var glob        = require('glob');
 var notifier    = require('node-notifier');
+var browserSync = require('browser-sync');
+var reload      = browserSync.reload;
 var helpers     = require(path.join(__dirname, 'gulp', 'lib', 'helpers.js'));
 var secrets     = require(path.join(__dirname, 'secrets.json'));
 var config      = require(path.join(__dirname, 'gulp', 'config.js'));
@@ -61,5 +63,17 @@ gulp.task('watch', function() {
   gulp.watch(config.resources.fonts,   [ 'fonts' ]);
 });
 
+gulp.task('serve', function() {
+  browserSync({
+    proxy: secrets.dev.url
+  });
+
+  gulp.watch(config.resources.scss,    [ 'styles' ]);
+  gulp.watch(config.resources.css,     [ 'copy', reload ]);
+  gulp.watch(config.resources.images,  [ 'images', reload ]);
+  gulp.watch(config.resources.scripts, [ 'scripts' ]);
+  gulp.watch(config.resources.php,     [ 'php', reload ]);
+  gulp.watch(config.resources.fonts,   [ 'fonts', reload ]);
+});
 
 module.exports = gulp;

@@ -17,7 +17,8 @@ var browserify  = require('browserify');
 var runSequence = require('run-sequence');
 var source      = require('vinyl-source-stream');
 var buffer      = require('vinyl-buffer');
-var lazypipe    = require('lazypipe');
+var browserSync = require('browser-sync');
+var reload      = browserSync.reload;
 
 gulp.task('scripts', function(cb) {
   runSequence('scripts:main', cb);
@@ -29,5 +30,7 @@ gulp.task('scripts:main', function() {
     debug: !config.production
   });
 
-  return bundler.bundle().pipe(pipelines.javascript('main.js')());
+  return bundler.bundle()
+    .pipe(pipelines.javascript('main.js')())
+    .pipe(reload({ stream: true }));
 });
