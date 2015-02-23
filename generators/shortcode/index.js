@@ -14,32 +14,33 @@ var generators = require('yeoman-generator');
 var yosay      = require('yosay');
 var chalk      = require('chalk');
 
-var nameValuePairs = function nameValuePairs(answerString) {
-  var rawPairs = answerString.split(',');
-  var pairs    = _.map(rawPairs, function(arg) {
-    var pair = { name: null, value: null };
+module.exports = generators.Base.extend({
 
-    if (arg.indexOf('=') !== -1) {
-      arg       = arg.split('=');
-      pair.name = arg[0];
+  _nameValuePairs: function(answerString) {
+    var str      = this._.str;
+    var rawPairs = answerString.split(',');
+    var pairs    = _.map(rawPairs, function(arg) {
+      var pair = { name: null, value: null };
 
-      if (arg.length < 2 || _.isEmpty(arg[1])) {
+      if (arg.indexOf('=') !== -1) {
+        arg       = arg.split('=');
+        pair.name = str.strip(arg[0]);
+
+        if (arg.length < 2 || _.isEmpty(arg[1])) {
+          return pair;
+        }
+
+        pair.value = str.strip(arg[1]);
+
         return pair;
       }
 
-      pair.value = arg[1];
-
+      pair.name = str.strip(arg);
       return pair;
-    }
+    });
 
-    pair.name = arg;
-    return pair;
-  });
-
-  return pairs;
-};
-
-module.exports = generators.Base.extend({
+    return pairs;
+  },
 
   description: 'Create a new shortcode for use in post content',
 
@@ -73,7 +74,7 @@ module.exports = generators.Base.extend({
         type: 'input',
         name: 'args',
         message: 'Comma separated list of arguments that the shortcode should take\n(ex: arg1=\'default value here\',argname_2,argname_3)',
-        filter: nameValuePairs,
+        filter: self._nameValuePairs,
         validate: function(input) {
           var valid = true;
 
@@ -81,7 +82,7 @@ module.exports = generators.Base.extend({
             return valid;
           }
 
-          var attrPairs = nameValuePairs(input);
+          var attrPairs = self._nameValuePairs(input);
           valid         = !!_.first(attrPairs, function(pair) {
             var attr         = { name: '', value: '' };
             var invalidChars = /[^a-zA-Z0-9\_]/g;
@@ -103,8 +104,8 @@ module.exports = generators.Base.extend({
     ];
 
     this.prompt(questions, function(answers) {
+      self.log(chalk.green('Got it. One shortcode, coming up...'));
       self.answers = answers;
-      console.log(answers);
       done();
     });
   },
