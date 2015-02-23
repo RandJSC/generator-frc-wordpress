@@ -17,3 +17,4 @@ function <%= functionPrefix %>_shortcode_<%= name %>($atts = array(), $content =
 <?php
   return ob_get_clean();
 }
+add_shortcode('<%= name %>', '<%= functionPrefix %>_shortcode_<%= name %>');

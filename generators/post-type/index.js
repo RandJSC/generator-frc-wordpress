@@ -141,6 +141,10 @@ module.exports = generators.Base.extend({
     },
 
     addMetabox: function() {
+      if (!this.answers.createMetabox) {
+        return;
+      }
+
       var metaboxFile = this.destinationPath('source/piklist/parts/meta-boxes/' + this.name + '-fields.php');
       var tplFile     = this.templatePath('_metabox.php');
       var tplVars     = _.assign(this.config.getAll(), this.answers, {
