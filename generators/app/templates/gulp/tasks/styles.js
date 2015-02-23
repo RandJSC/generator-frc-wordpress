@@ -22,16 +22,9 @@ var output         = path.join(config.build, 'css');
 var productionGzip = pipelines.productionGzip(output);
 
 gulp.task('styles', function() {
-  return $.rubySass(path.join(root, 'source', 'css/'), {
-    precision: 10,
-    style: config.production ? 'compressed' : 'expanded',
-    lineNumbers: !config.production,
-    loadPath: [
-      path.join(root, 'node_modules'),
-      path.join(root, 'source', 'css')
-    ].join(':')
-  })
+  return $.rubySass(path.join(root, 'source', 'css/'), config.sass)
   .on('error', helpers.handleError)
+  .pipe($.pleeease(config.pleeease))
   .pipe(productionGzip())
   .pipe($.size({ title: 'scss' }))
   .pipe(reload({ stream: true }));

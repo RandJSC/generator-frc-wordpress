@@ -51,7 +51,6 @@ module.exports = {
   sass: {
     style: production ? 'compressed' : 'expanded',
     lineNumbers: !production,
-    debugInfo: !production,
     precision: 10,
     loadPath: [
       path.join(__dirname, '..', 'source', 'css'),
