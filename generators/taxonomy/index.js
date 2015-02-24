@@ -20,18 +20,17 @@ module.exports = generators.Base.extend({
 
   constructor: function() {
     generators.Base.apply(this, arguments);
-
     this.argument('name', { type: String, required: true });
-
-    if (!fs.existsSync(this.destinationPath('source/includes/functions/taxonomies.php'))) {
-      this.log(chalk.red('Missing taxonomies.php include in destination!'));
-      process.exit(1);
-    }
   },
 
   initializing: function() {
     this.log(yosay('FRC WordPress Generator: Custom Taxonomy'));
     this.name = this._.str.underscored(this.name);
+
+    if (!fs.existsSync(this.destinationPath('source/includes/functions/taxonomies.php'))) {
+      this.log(chalk.red('Missing taxonomies.php include in destination!'));
+      process.exit(1);
+    }
   },
 
   prompting: function() {

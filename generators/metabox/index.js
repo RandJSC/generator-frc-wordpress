@@ -17,18 +17,17 @@ module.exports = generators.Base.extend({
 
   constructor: function() {
     generators.Base.apply(this, arguments);
-
     this.argument('name', { type: String, required: true });
-
-    if (!fs.existsSync(this.destinationPath('source/piklist/parts/meta-boxes'))) {
-      this.log(chalk.bold(chalk.red('Missing Piklist metaboxes folder!')));
-      process.exit(1);
-    }
   },
 
   initializing: function() {
     this.log(yosay('FRC WordPress Generator: Piklist Metabox'));
     this.name = this._.str.dasherize(this.name);
+
+    if (!fs.existsSync(this.destinationPath('source/piklist/parts/meta-boxes'))) {
+      this.log(chalk.bold(chalk.red('Missing Piklist metaboxes folder!')));
+      process.exit(1);
+    }
   },
 
   prompting: function() {

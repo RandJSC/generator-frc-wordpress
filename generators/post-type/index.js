@@ -31,17 +31,16 @@ module.exports = generators.Base.extend({
 
   constructor: function() {
     generators.Base.apply(this, arguments);
-
     this.argument('name', { type: String, required: true });
+  },
+
+  initializing: function() {
+    this.log(yosay('FRC WordPress Generator: Custom Post Type'));
 
     if (!fs.existsSync(this.destinationPath('source/includes/functions/post-types.php'))) {
       this.log(chalk.bold(chalk.red('Missing post-types.php include in destination!')));
       process.exit(1);
     }
-  },
-
-  initializing: function() {
-    this.log(yosay('FRC WordPress Generator: Custom Post Type'));
   },
 
   prompting: function() {
