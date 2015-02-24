@@ -15,9 +15,15 @@ var chalk      = require('chalk');
 var path       = require('path');
 var inflect    = require('inflect');
 
+var isPublic   = function isPublic(answers) {
+  return !!_.find(answers.visibilityOpts, function(opt) {
+    return opt === 'public' || opt === 'show_ui';
+  });
+};
+
 module.exports = generators.Base.extend({
 
-  visibilityChoices: [
+  _visibilityChoices: [
     'public',
     'exclude_from_search',
     'publicly_queryable',
@@ -27,11 +33,36 @@ module.exports = generators.Base.extend({
     'show_in_admin_bar'
   ],
 
+  _supportChoices: [
+    'title',
+    'editor',
+    'author',
+    'thumbnail',
+    'excerpt',
+    'trackbacks',
+    'custom-fields',
+    'comments',
+    'revisions',
+    'page-attributes',
+    'post-formats'
+  ],
+
   description: 'Create a new custom post type',
 
   constructor: function() {
     generators.Base.apply(this, arguments);
     this.argument('name', { type: String, required: true });
+  },
+
+  _supportDefaults: function(answers) {
+    var supports = [ 'title' ];
+
+    if (isPublic(answers)) {
+      supports.push('editor');
+      supports.push('thumbnail');
+    }
+
+    return supports;
   },
 
   initializing: function() {
@@ -63,28 +94,9 @@ module.exports = generators.Base.extend({
       },
       {
         type: 'checkbox',
-        name: 'supports',
-        message: 'Supported functionality:',
-        choices: [
-          'title',
-          'editor',
-          'author',
-          'thumbnail',
-          'excerpt',
-          'trackbacks',
-          'custom-fields',
-          'comments',
-          'revisions',
-          'page-attributes',
-          'post-formats'
-        ],
-        default: [ 'title', 'editor', 'thumbnail' ]
-      },
-      {
-        type: 'checkbox',
         name: 'visibilityOpts',
         message: 'Visibility options:',
-        choices: this.visibilityChoices,
+        choices: this._visibilityChoices,
         default: [
           'public',
           'publicly_queryable',
@@ -94,10 +106,23 @@ module.exports = generators.Base.extend({
         ]
       },
       {
+        type: 'checkbox',
+        name: 'supports',
+        message: 'Supported functionality:',
+        choices: this._supportChoices,
+        default: this._supportDefaults
+      },
+      {
+        type: 'confirm',
+        name: 'hasArchive',
+        message: 'Should the post type have an archive?',
+        default: isPublic
+      },
+      {
         type: 'confirm',
         name: 'createMetabox',
         message: 'Create a Piklist metabox for this post type?',
-        default: true
+        default: isPublic
       }
     ];
 
