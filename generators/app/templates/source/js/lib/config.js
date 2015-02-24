@@ -3,12 +3,10 @@
  * Global Settings and Configuration
  */
 
-(function() {
+/* jshint esnext: true, globalstrict: true, browser: true */
 
-  'use strict';
+'use strict';
 
-  var config = {};
+var config = {};
 
-  module.exports = config;
-
-})();
+export default config;

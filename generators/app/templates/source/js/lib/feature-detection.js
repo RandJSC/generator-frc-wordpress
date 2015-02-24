@@ -3,32 +3,28 @@
  * Barebones Feature Detection Library
  */
 
-(function(window, undefined) {
+/* jshint esnext: true, globalstrict: true */
+/* global window */
 
-  'use strict';
+'use strict';
 
-  var touch = function() {
-    return ('ontouchstart' in window || 'onmsgesturechange' in window);
-  };
+import isUndefined from 'lodash.isundefined';
+import memoize from 'lodash.memoize';
 
-  var matchMedia = function() {
-    return ('matchMedia' in window && typeof window.matchMedia === 'function');
-  };
+export var touch = memoize(function() {
+  return ('ontouchstart' in window || 'onmsgesturechange' in window);
+});
 
-  var matchMediaListener = function() {
-    if (!matchMedia()) {
-      return false;
-    }
+export var matchMedia = memoize(function() {
+  return ('matchMedia' in window && typeof window.matchMedia === 'function');
+});
 
-    var matcher = window.matchMedia('only all');
+export var matchMediaListener = memoize(function() {
+  if (!matchMedia()) {
+    return false;
+  }
 
-    return ('addListener' in matcher && typeof matcher.addListener === 'function');
-  };
+  var matcher = window.matchMedia('only all');
 
-  module.exports = {
-    touch: touch(),
-    matchMedia: matchMedia(),
-    matchMediaListener: matchMediaListener()
-  };
-
-})(window);
+  return ('addListener' in matcher && typeof matcher.addListener === 'function');
+});

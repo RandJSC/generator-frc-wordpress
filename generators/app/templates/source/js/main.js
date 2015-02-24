@@ -3,26 +3,26 @@
  * Main JavaScript
  */
 
-(function(window, undefined) {
+/* jshint esnext: true, node: true, browser: true */
 
-  'use strict';
+'use strict';
 
-  var ie         = require('./lib/ie-detect');
-  var config     = require('./lib/config');
-  var $          = require('jquery');
-  var fastClick  = require('fastclick');
-  var logger     = require('./lib/logger');
-  var matchMedia = require('./lib/match-media-polyfill');
-  var features   = require('./lib/feature-detection');
+import ie from './lib/ie-detect';
+import config from './lib/config';
+import $ from 'jquery';
+import fastClick from 'fastclick';
+import Logger from './lib/logger';
+import matchMedia from './lib/match-media-polyfill';
+import features from './lib/feature-detection';
 
-  $(function() {
-    
-    logger.log('timing', 'begin docReady');
+var logger = Logger.getInstance();
 
-    $(document.documentElement).removeClass('no-js').addClass('js');
+$(function() {
+  
+  logger.log('timing', 'begin docReady');
 
-    logger.log('timing', 'end docReady');
+  $(document.documentElement).removeClass('no-js').addClass('js');
 
-  });
+  logger.log('timing', 'end docReady');
 
-})(window);
+});

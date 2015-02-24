@@ -5,55 +5,55 @@
  * (fixes missing IE 9 window.console)
  */
 
-(function(window, undefined) {
+/* jshint esnext: true, globalstrict: true, browser: true */
+/* global console */
 
-  'use strict';
+'use strict';
 
-  var ie     = require('./ie-detect');
-  var assign = require('lodash.assign');
+import ie from './ie-detect';
+import assign from 'lodash.assign';
+import Bragi from 'bragi-browser';
 
-  var Logger = (function() {
-    var instance;
-    var defaults = {
-      disabled: false
-    };
+var Logger = (function() {
+  var instance;
+  var defaults = {
+    disabled: false
+  };
 
-    var LoggerInstance = function(opts) {
-      var noop     = function() {};
+  var LoggerInstance = function(opts) {
+    var noop     = function() {};
 
-      this.options = assign(defaults, opts);
-      this.backend = null;
+    this.options = assign(defaults, opts);
+    this.backend = null;
 
-      if (!ie.isIE()) {
-        this.backend = require('bragi-browser');
-      } else if ('console' in window) {
-        // Allows us to call `window.console.apply(...)`
-        window.console.log = Function.prototype.bind.call(console.log, console);
-        this.backend       = window.console;
-      } else {
-        this.backend = noop;
+    if (!ie.isIE()) {
+      this.backend = Bragi;
+    } else if ('console' in window) {
+      // Allows us to call `window.console.apply(...)`
+      window.console.log = Function.prototype.bind.call(console.log, console);
+      this.backend       = window.console;
+    } else {
+      this.backend = noop;
+    }
+  };
+
+  LoggerInstance.prototype.log = function log() {
+    if (this.options.disabled) {
+      return;
+    }
+
+    return this.backend.log.apply(this.backend, arguments);
+  };
+
+  return {
+    getInstance: function getInstance(opts) {
+      if (instance === undefined) {
+        instance = new LoggerInstance(opts);
       }
-    };
 
-    LoggerInstance.prototype.log = function log() {
-      if (this.options.disabled) {
-        return;
-      }
+      return instance;
+    }
+  };
+})();
 
-      return this.backend.log.apply(this.backend, arguments);
-    };
-
-    return {
-      getInstance: function getInstance(opts) {
-        if (instance === undefined) {
-          instance = new LoggerInstance(opts);
-        }
-
-        return instance;
-      }
-    };
-  })();
-
-  module.exports = Logger;
-
-})(window);
+export default Logger;

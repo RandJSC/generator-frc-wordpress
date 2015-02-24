@@ -3,55 +3,51 @@
  * Internet Explorer Detection Module
  */
 
-(function(window, undefined) {
+/* jshint esnext: true, globalstrict: true, browser: true */
 
-  'use strict';
+'use strict';
 
-  var some         = require('lodash.some');
-  var html         = document.documentElement;
-  var hasClassList = 'classList' in html;
+import some from 'lodash.some';
+import includes from 'lodash.includes';
 
-  var hasConditionalClass = function hasConditionalClass(klass) {
-    if (hasClassList) {
-      return html.classList.contains(klass);
-    }
+var html         = document.documentElement;
+var hasClassList = includes(html, 'classList');
 
-    var classes = html.className.split(' ');
+var hasConditionalClass = function hasConditionalClass(klass) {
+  if (hasClassList) {
+    return html.classList.contains(klass);
+  }
 
-    return some(classes, function(cls) {
-      return cls === klass;
-    });
-  };
+  var classes = html.className.split(' ');
 
-  var methods = {};
-  methods.isIE = function isIE(ver) {
-    var hasClass = hasConditionalClass('ie');
+  return some(classes, function(cls) {
+    return cls === klass;
+  });
+};
 
-    if (!hasClass) {
-      return false;
-    }
+var methods = {};
+methods.isIE = function isIE(ver) {
+  var hasClass = hasConditionalClass('ie');
 
-    if (ver) {
-      return methods.lt(ver + 1) && methods.gt(ver - 1);
-    }
+  if (!hasClass) {
+    return false;
+  }
 
-    return true;
-  };
+  if (ver) {
+    return methods.lt(ver + 1) && methods.gt(ver - 1);
+  }
 
-  methods.lt = function(ver) {
-    var verClass = 'lt-ie' + ver;
-    return methods.isIE() && hasConditionalClass(verClass);
-  };
+  return true;
+};
 
-  methods.lte = function(ver) {
-    var verClass = 'lt-ie' + (ver + 1);
-    return methods.isIE() && hasConditionalClass(verClass);
-  };
+methods.lt = function(ver) {
+  var verClass = 'lt-ie' + ver;
+  return methods.isIE() && hasConditionalClass(verClass);
+};
 
-  module.exports = {
-    isIE : methods.isIE,
-    lt   : methods.lt,
-    lte  : methods.lte
-  };
+methods.lte = function(ver) {
+  var verClass = 'lt-ie' + (ver + 1);
+  return methods.isIE() && hasConditionalClass(verClass);
+};
 
-})(window);
+export default methods;

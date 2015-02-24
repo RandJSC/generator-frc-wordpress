@@ -24,9 +24,10 @@ var reload      = browserSync.reload;
 var jsTask      = function(filename) {
   return function() {
     var bundler = browserify({
-      entries: [ path.join(root, 'source', 'js', filename) ],
-      debug: !config.production
-    }).transform(babelify);
+        entries: [ path.join(root, 'source', 'js', filename) ],
+        debug: !config.production
+      })
+      .transform(babelify);
 
     return bundler.bundle()
       .pipe(pipelines.javascript(filename)())
