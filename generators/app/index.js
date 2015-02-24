@@ -23,6 +23,7 @@ var pkg        = require(path.join(__dirname, '..', '..', 'package.json'));
 var COMPOSER_URL = 'https://getcomposer.org/composer.phar';
 
 var devDependencies = [
+  'babelify',
   'browserify',
   'browserify-shim',
   'browser-sync',

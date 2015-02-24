@@ -14,6 +14,7 @@ var pipelines   = require(path.join(root, 'gulp', 'lib', 'pipelines'));
 var gulp        = require('gulp');
 var $           = require('gulp-load-plugins')({ lazy: true });
 var browserify  = require('browserify');
+var babelify    = require('babelify');
 var runSequence = require('run-sequence');
 var source      = require('vinyl-source-stream');
 var buffer      = require('vinyl-buffer');
@@ -28,7 +29,7 @@ gulp.task('scripts:main', function() {
   var bundler = browserify({
     entries: [ path.join(root, 'source', 'js', 'main.js') ],
     debug: !config.production
-  });
+  }).transform(babelify);
 
   return bundler.bundle()
     .pipe(pipelines.javascript('main.js')())
