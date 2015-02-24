@@ -84,6 +84,7 @@ var productionDependencies = [
   'lodash',
   'lodash.assign',
   'lodash.includes',
+  'lodash.memoize',
   'lodash.some',
   'lodash.isundefined',
   'q',
