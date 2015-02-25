@@ -11,4 +11,4 @@ function <%= functionPrefix %>_register_nav_menus() {
     'main_nav' => 'Main Navigation',
   ));
 }
-add_action('init', '<%= functionPrefix %>_register_nav_menus');
+add_action('after_setup_theme', '<%= functionPrefix %>_register_nav_menus');
