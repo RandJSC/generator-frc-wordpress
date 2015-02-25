@@ -3,7 +3,7 @@
  * Main JavaScript
  */
 
-/* jshint esnext: true, node: true, browser: true */
+/* jshint esnext: true, globalstrict: true, browser: true */
 
 'use strict';
 
