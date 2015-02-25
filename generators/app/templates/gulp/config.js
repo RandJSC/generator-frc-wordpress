@@ -8,14 +8,20 @@
 
 var path  = require('path');
 var gutil = require('gulp-util');
-var src   = './source';
-var build = './build';
 
+var root       = path.join(__dirname, '..');
+var src        = path.join(root, 'source');
+var build      = path.join(root, 'build');
+var dist       = path.join(root, 'dist');
+var composer   = path.join(root, 'composer.phar');
 var production = !gutil.env.dev;
 
 module.exports = {
+  root: root,
   src: src,
   build: build,
+  dist: dist,
+  composer: composer,
   production: production,
   resources: {
     scss: path.join(src, 'css', '**', '*.scss'),

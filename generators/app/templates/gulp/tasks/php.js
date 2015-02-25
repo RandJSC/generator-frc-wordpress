@@ -8,17 +8,17 @@
 
 var fs          = require('fs');
 var path        = require('path');
-var root        = path.join(__dirname, '..', '..');
-var config      = require(path.join(root, 'gulp', 'config'));
-var helpers     = require(path.join(root, 'gulp', 'lib', 'helpers'));
+var config      = require(path.join(__dirname, '..', 'config'));
+var helpers     = require(path.join(config.root, 'gulp', 'lib', 'helpers'));
 var gulp        = require('gulp');
 var $           = require('gulp-load-plugins')({ lazy: true });
 var runSequence = require('run-sequence');
 
 gulp.task('php', function(cb) {
   var tasks = [ 'php:copy' ];
+  var json  = config.composer.replace('.phar', '.json');
 
-  if (fs.existsSync(path.join(root, 'composer.phar')) && fs.existsSync(path.join(root, 'composer.json'))) {
+  if (fs.existsSync(config.composer) && fs.existsSync(json)) {
     tasks.push('php:composer');
   }
 

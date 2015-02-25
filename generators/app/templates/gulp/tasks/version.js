@@ -7,16 +7,15 @@
 'use strict';
 
 var path   = require('path');
-var root   = path.join(__dirname, '..', '..');
+var config = require(path.join(__dirname, '..', 'config'));
 var gulp   = require('gulp');
-var config = require(path.join(root, 'gulp', 'config'));
 var $      = require('gulp-load-plugins')({ lazy: true });
 
 var bumper = function(type) {
   return function() {
     return gulp.src(config.resources.json)
       .pipe($.bump({ type: type }))
-      .pipe(gulp.dest(root));
+      .pipe(gulp.dest(config.root));
   };
 };
 
@@ -26,6 +25,6 @@ gulp.task('bump:major', bumper('major'));
 gulp.task('bump:reset', function() {
   return gulp.src(config.resources.json)
     .pipe($.bump({ version: '0.1.0' }))
-    .pipe(gulp.dest(root));
+    .pipe(gulp.dest(config.root));
 });
 

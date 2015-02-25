@@ -7,10 +7,9 @@
 'use strict';
 
 var path        = require('path');
-var root        = path.join(__dirname, '..', '..');
-var config      = require(path.join(root, 'gulp', 'config'));
-var helpers     = require(path.join(root, 'gulp', 'lib', 'helpers'));
-var pipelines   = require(path.join(root, 'gulp', 'lib', 'pipelines'));
+var config      = require(path.join(__dirname, '..', 'config'));
+var helpers     = require(path.join(config.root, 'gulp', 'lib', 'helpers'));
+var pipelines   = require(path.join(config.root, 'gulp', 'lib', 'pipelines'));
 var gulp        = require('gulp');
 var $           = require('gulp-load-plugins')({ lazy: true });
 var browserify  = require('browserify');
@@ -24,7 +23,7 @@ var reload      = browserSync.reload;
 var jsTask      = function(filename) {
   return function() {
     var bundler = browserify({
-        entries: [ path.join(root, 'source', 'js', filename) ],
+        entries: [ path.join(config.src, 'js', filename) ],
         debug: !config.production
       })
       .transform(babelify);

@@ -7,9 +7,9 @@
 'use strict';
 
 var path    = require('path');
-var secrets = require(path.join(__dirname, '..', '..', 'secrets.json'));
-var helpers = require(path.join(__dirname, '..', 'lib', 'helpers'));
 var config  = require(path.join(__dirname, '..', 'config'));
+var secrets = require(path.join(config.root, 'secrets.json'));
+var helpers = require(path.join(config.root, 'gulp', 'lib', 'helpers'));
 var gulp    = require('gulp');
 var $       = require('gulp-load-plugins')({ lazy: true });
 var _       = require('lodash');

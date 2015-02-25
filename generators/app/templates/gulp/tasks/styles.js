@@ -7,11 +7,10 @@
 'use strict';
 
 var path        = require('path');
-var root        = path.join(__dirname, '..', '..');
 var config      = require(path.join(__dirname, '..', 'config'));
-var secrets     = require(path.join(__dirname, '..', '..', 'secrets.json'));
-var helpers     = require(path.join(__dirname, '..', 'lib', 'helpers'));
-var pipelines   = require(path.join(__dirname, '..', 'lib', 'pipelines'));
+var secrets     = require(path.join(config.root, 'secrets.json'));
+var helpers     = require(path.join(config.root, 'gulp', 'lib', 'helpers'));
+var pipelines   = require(path.join(config.root, 'gulp', 'lib', 'pipelines'));
 var chalk       = require('chalk');
 var gulp        = require('gulp');
 var $           = require('gulp-load-plugins')({ lazy: true });
@@ -22,7 +21,7 @@ var output         = path.join(config.build, 'css');
 var productionGzip = pipelines.productionGzip(output);
 
 gulp.task('styles', function() {
-  return $.rubySass(path.join(root, 'source', 'css/'), config.sass)
+  return $.rubySass(path.join(config.src, 'css/'), config.sass)
   .on('error', helpers.handleError)
   .pipe($.pleeease(config.pleeease))
   .pipe(productionGzip())

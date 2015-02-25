@@ -7,10 +7,10 @@
 'use strict';
 
 var path    = require('path');
-var root    = path.join(__dirname, '..', '..');
-var secrets = require(path.join(root, 'secrets.json'));
+var config  = require(path.join(__dirname, '..', 'config'));
+var secrets = require(path.join(config.root, 'secrets.json'));
+var helpers = require(path.join(config.root, 'gulp', 'lib', 'helpers'));
 var gulp    = require('gulp');
-var helpers = require(path.join(root, 'gulp', 'lib', 'helpers'));
 var chalk   = require('chalk');
 var $       = require('gulp-load-plugins')({ lazy: true });
 var _       = require('lodash');
@@ -27,7 +27,7 @@ var isValidDirection = function(obj, key) {
 var syncTask = function(opts) {
   var config     = secrets.servers.staging.rsync;
   opts           = _.isObject(opts) ? opts : {};
-  opts.source    = hasValid(opts, 'source') ? opts.source : path.join(root, 'build/');
+  opts.source    = hasValid(opts, 'source') ? opts.source : path.join(config.root, 'build/');
   opts.dest      = hasValid(opts, 'dest') ? opts.dest : config.path;
   opts.message   = hasValid(opts, 'message') ? opts.message : 'Beginning sync task';
   opts.direction = isValidDirection(opts, 'direction') ? opts.direction : 'up';
@@ -57,20 +57,20 @@ var syncTask = function(opts) {
 gulp.task('sync:up', syncTask({ message: 'Syncing up to staging...' }));
 
 gulp.task('uploads:up', syncTask({
-  source: path.join(root, 'uploads/'),
+  source: path.join(config.root, 'uploads/'),
   dest: path.join(staging.public_html, 'wp-content', 'uploads/'),
   message: 'Syncing uploads UP...'
 }));
 
 gulp.task('uploads:down', syncTask({
   source: path.join(staging.public_html, 'wp-content', 'uploads/'),
-  dest: path.join(root, 'uploads/'),
+  dest: path.join(config.root, 'uploads/'),
   message: 'Syncing uploads DOWN...',
   direction: 'down'
 }));
 
 gulp.task('plugins:up', syncTask({
-  source: path.join(root, 'plugins/'),
+  source: path.join(config.root, 'plugins/'),
   dest: path.join(staging.public_html, 'wp-content', 'plugins/'),
   message: 'Syncing plugins UP...',
   direction: 'up'
@@ -78,7 +78,7 @@ gulp.task('plugins:up', syncTask({
 
 gulp.task('plugins:down', syncTask({
   source: path.join(staging.public_html, 'wp-content', 'plugins/'),
-  dest: path.join(root, 'plugins/'),
+  dest: path.join(config.root, 'plugins/'),
   message: 'Syncing plugins DOWN...',
   direction: 'down'
 }));

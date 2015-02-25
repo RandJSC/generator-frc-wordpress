@@ -26,14 +26,15 @@ var reload      = browserSync.reload;
 var helpers     = require(path.join(__dirname, 'gulp', 'lib', 'helpers.js'));
 var secrets     = require(path.join(__dirname, 'secrets.json'));
 var config      = require(path.join(__dirname, 'gulp', 'config.js'));
+var tasks       = path.join(config.root, 'gulp', 'tasks');
 
 try {
-  requireDir(path.join(__dirname, 'gulp', 'tasks'), { recurse: true });
+  requireDir(tasks, { recurse: true });
 } catch (err) {
   console.error(err);
 }
 
-gulp.task('clean', del.bind(null, [ '.tmp', 'build' ]));
+gulp.task('clean', del.bind(null, [ path.join(config.root, '.tmp'), config.build ]));
 
 gulp.task('config', function(cb) {
   console.log(config);
