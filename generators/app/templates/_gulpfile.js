@@ -65,7 +65,7 @@ gulp.task('watch', function() {
 
 gulp.task('serve', function() {
   browserSync({
-    proxy: secrets.dev.url
+    proxy: secrets.servers.dev.url
   });
 
   gulp.watch(config.resources.scss,    [ 'styles' ]);
