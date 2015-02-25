@@ -52,6 +52,7 @@ var devDependencies = [
   'gulp-shell',
   'gulp-size',
   'gulp-sourcemaps',
+  'gulp-template',
   'gulp-uglifyjs',
   'gulp-util',
   'gulp-zip',
@@ -145,6 +146,13 @@ module.exports = generators.Base.extend({
           type: 'input',
           name: 'authors',
           message: 'Who are the authors?',
+          store: true
+        },
+        {
+          type: 'input',
+          name: 'authorURI',
+          message: 'Author URL:',
+          default: 'http://fifthroomcreative.com',
           store: true
         },
         {
@@ -468,6 +476,20 @@ module.exports = generators.Base.extend({
       }
 
       this.fs.writeJSON(this.destinationPath('package.json'), pkg);
+    },
+
+    addThemeJSON: function() {
+      var config = this.config.getAll();
+      var theme  = {
+        name: config.themeName,
+        author: config.authors,
+        author_uri: config.authorURI,
+        description: config.themeDescription,
+        version: '0.1.0',
+        tags: [ 'responsive', 'piklist' ]
+      };
+
+      this.fs.writeJSON(this.destinationPath('theme.json'), theme);
     },
 
     rvmConfig: function() {

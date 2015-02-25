@@ -25,10 +25,10 @@ var isValidDirection = function(obj, key) {
 };
 
 var syncTask = function(opts) {
-  var config     = secrets.servers.staging.rsync;
+  var rsyncConf  = secrets.servers.staging.rsync;
   opts           = _.isObject(opts) ? opts : {};
   opts.source    = hasValid(opts, 'source') ? opts.source : path.join(config.root, 'build/');
-  opts.dest      = hasValid(opts, 'dest') ? opts.dest : config.path;
+  opts.dest      = hasValid(opts, 'dest') ? opts.dest : rsyncConf.path;
   opts.message   = hasValid(opts, 'message') ? opts.message : 'Beginning sync task';
   opts.direction = isValidDirection(opts, 'direction') ? opts.direction : 'up';
 

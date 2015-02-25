@@ -1,0 +1,8 @@
+/*
+Theme Name: <%= name %>
+Author: <%= author %>
+Author URI: <%= author_uri %>
+Description: <%= description %>
+Version: <%= version %>
+Tags: <%= tags.join(', ') %>
+*/
