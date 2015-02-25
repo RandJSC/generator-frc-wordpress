@@ -7,19 +7,20 @@
 
 'use strict';
 
-var _          = require('lodash');
-var gulp       = require('gulp');
-var util       = require('gulp-util');
-var shell      = require('gulp-shell');
-var chalk      = require('chalk');
-var notifier   = require('node-notifier');
-var mapStream  = require('map-stream');
-var Handlebars = require('handlebars');
-var path       = require('path');
-var os         = require('os');
-var secrets    = require(path.join(__dirname, '..', '..', 'secrets.json'));
-var dev        = secrets.servers.dev;
-var staging    = secrets.servers.staging;
+var _               = require('lodash');
+var gulp            = require('gulp');
+var util            = require('gulp-util');
+var shell           = require('gulp-shell');
+var chalk           = require('chalk');
+var notifier        = require('node-notifier');
+var mapStream       = require('map-stream');
+var Handlebars      = require('handlebars');
+var path            = require('path');
+var os              = require('os');
+var secrets         = require(path.join(__dirname, '..', '..', 'secrets.json'));
+var dev             = secrets.servers.dev;
+var staging         = secrets.servers.staging;
+var defaultBindings = { dev: dev, staging: staging };
 
 var privateKey = path.join(
   __dirname,
@@ -72,13 +73,21 @@ helpers.shell = function(command, bindings, shellOpts) {
 };
 
 helpers.remoteShell = function(command, shellOpts) {
+  if (!_.isString(command)) {
+    command = '';
+  }
+
   if (!_.isObject(shellOpts)) {
     shellOpts = {};
   }
 
-  var bindings = { command: command };
+  if (_.isArray(command)) {
+    command = command.join(' ');
+  }
 
-  var sshCmd = [
+  command      = _.template(command)(defaultBindings);
+  var bindings = { command: command };
+  var sshCmd   = [
     'ssh',
     '-p',
     '<%= staging.ssh.port %>',
@@ -90,12 +99,20 @@ helpers.remoteShell = function(command, shellOpts) {
 };
 
 helpers.vagrantCommand = function(command, shellOpts) {
+  if (!_.isString(command)) {
+    command = '';
+  }
+
   if (!_.isObject(shellOpts)) {
     shellOpts = {};
   }
 
-  var bindings = { command: command };
+  if (_.isArray(command)) {
+    command = command.join(' ');
+  }
 
+  command        = _.template(command)(defaultBindings);
+  var bindings   = { command: command };
   var vagrantCmd = [
     'vagrant',
     'ssh',
