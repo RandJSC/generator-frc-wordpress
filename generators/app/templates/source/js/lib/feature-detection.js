@@ -9,7 +9,7 @@
 'use strict';
 
 import isUndefined from 'lodash.isundefined';
-import memoize from 'lodash.memoize';
+import memoize     from 'lodash.memoize';
 
 export var touch = memoize(function() {
   return ('ontouchstart' in window || 'onmsgesturechange' in window);

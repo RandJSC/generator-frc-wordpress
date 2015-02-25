@@ -7,7 +7,7 @@
 
 'use strict';
 
-import some from 'lodash.some';
+import some     from 'lodash.some';
 import includes from 'lodash.includes';
 
 var html         = document.documentElement;

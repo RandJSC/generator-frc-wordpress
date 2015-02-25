@@ -10,9 +10,9 @@
 
 'use strict';
 
-import ie from './ie-detect';
+import ie     from './ie-detect';
 import assign from 'lodash.assign';
-import Bragi from 'bragi-browser';
+import Bragi  from 'bragi-browser';
 
 var Logger = (function() {
   var instance;
