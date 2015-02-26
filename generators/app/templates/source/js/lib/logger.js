@@ -10,50 +10,47 @@
 
 'use strict';
 
-import ie     from './ie-detect';
-import assign from 'lodash.assign';
-import Bragi  from 'bragi-browser';
+import ie          from './ie-detect';
+import assign      from 'lodash.assign';
+import includes    from 'lodash.includes';
+import isUndefined from 'lodash.isundefined';
+import Bragi       from 'bragi-browser';
 
-var Logger = (function() {
-  var instance;
-  var defaults = {
-    disabled: false
-  };
-
-  var LoggerInstance = function(opts) {
-    var noop     = function() {};
+class LoggerInstance {
+  constructor(opts = {}) {
+    var noop     = function noop() {};
+    var defaults = { disabled: false };
 
     this.options = assign(defaults, opts);
-    this.backend = null;
+    this.backend = noop;
 
     if (!ie.isIE()) {
       this.backend = Bragi;
-    } else if ('console' in window) {
-      // Allows us to call `window.console.apply(...)`
-      window.console.log = Function.prototype.bind.call(console.log, console);
+    } else if (includes(window, 'console')) {
+      window.console.log = Function.prototype.bind.call(window.console.log, console);
       this.backend       = window.console;
-    } else {
-      this.backend = noop;
     }
-  };
+  }
 
-  LoggerInstance.prototype.log = function log() {
+  log() {
     if (this.options.disabled) {
       return;
     }
 
     return this.backend.log.apply(this.backend, arguments);
-  };
+  }
+}
 
-  return {
-    getInstance: function getInstance(opts) {
-      if (instance === undefined) {
-        instance = new LoggerInstance(opts);
-      }
+var instance;
 
-      return instance;
+var Logger = {
+  getInstance(opts = {}) {
+    if (isUndefined(instance)) {
+      instance = new LoggerInstance(opts);
     }
-  };
-})();
+
+    return instance;
+  }
+};
 
 export default Logger;
