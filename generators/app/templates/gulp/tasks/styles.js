@@ -27,8 +27,8 @@ gulp.task('styles', function(cb) {
 });
 
 gulp.task('styles:scss', function() {
-  return $.rubySass(path.join(config.src, 'css/'), config.sass)
-    .on('error', helpers.handleError)
+  return gulp.src(path.join(config.src, 'css', '**', '*.scss'))
+    .pipe($.sass(config.sass))
     .pipe($.pleeease(config.pleeease))
     .pipe(productionGzip())
     .pipe($.size({ title: 'scss' }))

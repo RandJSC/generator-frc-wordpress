@@ -56,10 +56,11 @@ module.exports = {
     debug: !production
   },
   sass: {
-    style: production ? 'compressed' : 'expanded',
-    lineNumbers: !production,
+    errLogToConsole: true,
+    outputStyle: 'expanded',
+    sourceComments: !production,
     precision: 10,
-    loadPath: [
+    includePaths: [
       path.join(__dirname, '..', 'source', 'css'),
       path.join(__dirname, '..', 'node_modules')
     ]
