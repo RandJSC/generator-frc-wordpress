@@ -49,7 +49,7 @@ var devDependencies = [
   'gulp-print',
   'gulp-rename',
   'gulp-rsync',
-  'gulp-ruby-sass',
+  'gulp-sass',
   'gulp-shell',
   'gulp-size',
   'gulp-sourcemaps',
@@ -494,14 +494,6 @@ module.exports = generators.Base.extend({
       this.fs.writeJSON(this.destinationPath('theme.json'), theme);
     },
 
-    rvmConfig: function() {
-      this.fs.copyTpl(
-        this.templatePath('_.versions.conf'),
-        this.destinationPath('.versions.conf'),
-        { version: this.config.get('rubyVersion'), gemset: this.config.get('slug') }
-      );
-    },
-
     nvmConfig: function() {
       this.fs.copyTpl(
         this.templatePath('_.nvmrc'),
@@ -539,13 +531,6 @@ module.exports = generators.Base.extend({
         this.templatePath('_Vagrantfile'),
         this.destinationPath('Vagrantfile'),
         { slug: this.config.get('slug') }
-      );
-    },
-
-    copyGemfile: function() {
-      this.fs.copy(
-        this.templatePath('_Gemfile'),
-        this.destinationPath('Gemfile')
       );
     },
 
