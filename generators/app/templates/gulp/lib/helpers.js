@@ -8,6 +8,7 @@
 'use strict';
 
 var _               = require('lodash');
+var fs              = require('fs');
 var gulp            = require('gulp');
 var util            = require('gulp-util');
 var shell           = require('gulp-shell');
@@ -17,20 +18,30 @@ var mapStream       = require('map-stream');
 var Handlebars      = require('handlebars');
 var path            = require('path');
 var os              = require('os');
+var spawnSync       = require('child_process').spawnSync;
 var secrets         = require(path.join(__dirname, '..', '..', 'secrets.json'));
 var dev             = secrets.servers.dev;
 var staging         = secrets.servers.staging;
 var defaultBindings = { dev: dev, staging: staging };
 
-var privateKey = path.join(
+var vagrantDir = path.join(
   __dirname,
   '..',
   '..',
   '.vagrant',
   'machines',
   'default',
-  'virtualbox',
+  'virtualbox'
+);
+
+var privateKey = path.join(
+  vagrantDir,
   'private_key'
+);
+
+var idFile = path.join(
+  vagrantDir,
+  'id'
 );
 
 var scpTemplate = [
@@ -186,5 +197,15 @@ helpers.log = function(msg, once) {
   });
 };
 
+helpers.vagrantRunning = function() {
+  if (!fs.existsSync(idFile)) {
+    return false;
+  }
+
+  var machineID = fs.readFileSync(idFile).toString();
+  var result    = spawnSync('vboxmanage', [ 'list', 'runningvms' ]).stdout.toString();
+
+  return result.indexOf(machineID) !== -1;
+};
 
 module.exports = helpers;

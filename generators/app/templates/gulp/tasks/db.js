@@ -34,6 +34,11 @@ var templateVars = {
 };
 
 gulp.task('db:up', function(cb) {
+  if (!helpers.vagrantRunning()) {
+    $.util.log(chalk.bold(chalk.red('Please start Vagrant VM before running this task!')));
+    return cb();
+  }
+
   runSequence(
     'db:up:dump',
     'db:up:copy',
@@ -105,6 +110,11 @@ gulp.task('db:up:urls', function() {
 });
 
 gulp.task('db:down', function(cb) {
+  if (!helpers.vagrantRunning()) {
+    $.util.log(chalk.bold(chalk.red('Please start Vagrant VM before running this task!')));
+    return cb();
+  }
+
   runSequence(
     'db:down:dump',
     'db:down:copy',
