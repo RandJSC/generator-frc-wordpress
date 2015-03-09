@@ -26,6 +26,7 @@ module.exports = {
   vagrantKey: path.join(root, '.vagrant', 'machines', 'default', 'virtualbox', 'private_key'),
   resources: {
     scss: path.join(src, 'css', '**', '*.scss'),
+    scripts: path.join(src, 'js', '**', '*.js'),
     images: path.join(src, 'img', '**', '*.{png,jpg,jpeg,gif,svg}'),
     vendorImages: [],
     svg: path.join(src, 'img', '**', '*.svg'),
