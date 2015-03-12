@@ -9,13 +9,13 @@ function <%= functionPrefix %>_register_post_type_<%= underscoreName %>($post_ty
     'title'               => 'Enter a Title...',
     'description'         => '<%= description %>',
     'supports'            => array( <%= supports.join(", ") %> ),
-    'public'              => <%= public %>,
-    'exclude_from_search' => <%= exclude_from_search %>,
-    'publicly_queryable'  => <%= publicly_queryable %>,
-    'show_in_nav_menus'   => <%= show_in_nav_menus %>,
-    'show_ui'             => <%= show_ui %>,
-    'show_in_menu'        => <%= show_in_menu %>,
-    'show_in_admin_bar'   => <%= show_in_admin_bar %>,
+    'public'              => <%= visibility.has('public') %>,
+    'exclude_from_search' => <%= visibility.has('exclude_from_search') %>,
+    'publicly_queryable'  => <%= visibility.has('publicly_queryable') %>,
+    'show_in_nav_menus'   => <%= visibility.has('show_in_nav_menus') %>,
+    'show_ui'             => <%= visibility.has('show_ui') %>,
+    'show_in_menu'        => <%= visibility.has('show_in_menu') %>,
+    'show_in_admin_bar'   => <%= visibility.has('show_in_admin_bar') %>,
   );
 
   return $post_types;

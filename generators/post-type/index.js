@@ -7,13 +7,14 @@
 
 'use strict';
 
-var _          = require('lodash');
-var fs         = require('fs');
-var generators = require('yeoman-generator');
-var yosay      = require('yosay');
-var chalk      = require('chalk');
-var path       = require('path');
-var inflect    = require('inflect');
+var _           = require('lodash');
+var fs          = require('fs');
+var generators  = require('yeoman-generator');
+var yosay       = require('yosay');
+var chalk       = require('chalk');
+var path        = require('path');
+var inflect     = require('inflect');
+var collections = require('es6-collections');
 
 var isPublic   = function isPublic(answers) {
   return !!_.find(answers.visibilityOpts, function(opt) {
@@ -146,9 +147,7 @@ module.exports = generators.Base.extend({
         return '\'' + item + '\'';
       });
 
-      _.forEach(this.visibilityChoices, function(choice) {
-        tplVars[choice] = _.include(self.answers.visibilityOpts, choice);
-      });
+      tplVars.visibility = new collections.Set(self.answers.visibilityOpts);
 
       var cptInclude  = this.destinationPath('source/includes/functions/post-types.php');
       var cptContent  = this.fs.read(cptInclude);

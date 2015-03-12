@@ -19,6 +19,7 @@
   "dependencies": {
     "chalk": "^0.5.1",
     "cheerio": "^0.18.0",
+    "es6-collections": "^0.5.1",
     "esprima": "^2.0.0",
     "inflect": "^0.3.0",
     "iniparser": "^1.0.5",
