@@ -4,6 +4,7 @@
  */
 
 /* jshint node: true */
+/* global Set */
 
 'use strict';
 
@@ -147,7 +148,7 @@ module.exports = generators.Base.extend({
         return '\'' + item + '\'';
       });
 
-      tplVars.visibility = new collections.Set(self.answers.visibilityOpts);
+      tplVars.visibility = new Set(self.answers.visibilityOpts);
 
       var cptInclude  = this.destinationPath('source/includes/functions/post-types.php');
       var cptContent  = this.fs.read(cptInclude);
