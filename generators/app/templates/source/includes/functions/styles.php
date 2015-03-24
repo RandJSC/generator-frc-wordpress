@@ -6,12 +6,13 @@
 
 function <%= functionPrefix %>_enqueue_styles() {
 
+  $theme     = wp_get_theme();
   $theme_uri = get_stylesheet_directory_uri();
   $styles    = array(
     '<%= functionPrefix %>-main' => array(
       'src'     => "$theme_uri/css/style.css",
       'deps'    => array(),
-      'version' => '0.1.0',
+      'version' => $theme->get('Version'),
       'media'   => 'screen',
     ),
   );
