@@ -95,6 +95,12 @@ module.exports = generators.Base.extend({
         message: 'Description:'
       },
       {
+        type: 'input',
+        name: 'menuIcon',
+        message: 'Menu icon (dashicons classname):',
+        default: 'dashicons-admin-generic'
+      },
+      {
         type: 'checkbox',
         name: 'visibilityOpts',
         message: 'Visibility options:',

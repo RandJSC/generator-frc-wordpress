@@ -8,6 +8,7 @@ function <%= functionPrefix %>_register_post_type_<%= underscoreName %>($post_ty
     'labels'              => $labels,
     'title'               => 'Enter a Title...',
     'description'         => '<%= description %>',
+    'menu_icon'           => '<%= menuIcon %>',
     'supports'            => array( <%= supports.join(", ") %> ),
     'public'              => <%= visibility.has('public') %>,
     'exclude_from_search' => <%= visibility.has('exclude_from_search') %>,
