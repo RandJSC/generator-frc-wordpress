@@ -13,29 +13,29 @@ var path       = require('path');
 var generators = require('yeoman-generator');
 var yosay      = require('yosay');
 var chalk      = require('chalk');
+_.str          = require('underscore.string');
 
 module.exports = generators.Base.extend({
 
   _nameValuePairs: function(answerString) {
-    var str      = this._.str;
     var rawPairs = answerString.split(',');
     var pairs    = _.map(rawPairs, function(arg) {
       var pair = { name: null, value: null };
 
       if (arg.indexOf('=') !== -1) {
         arg       = arg.split('=');
-        pair.name = str.strip(arg[0]);
+        pair.name = _.str.strip(arg[0]);
 
         if (arg.length < 2 || _.isEmpty(arg[1])) {
           return pair;
         }
 
-        pair.value = str.strip(arg[1]);
+        pair.value = _.str.strip(arg[1]);
 
         return pair;
       }
 
-      pair.name = str.strip(arg);
+      pair.name = _.str.strip(arg);
       return pair;
     });
 
@@ -51,7 +51,7 @@ module.exports = generators.Base.extend({
 
   initializing: function() {
     this.log(yosay('FRC WordPress Generator: Shortcode'));
-    this.name = this._.str.underscored(this.name);
+    this.name = _.str.underscored(this.name);
 
     if (!fs.existsSync(this.destinationPath('source/includes/functions/shortcodes.php'))) {
       this.log(chalk.red('Missing shortcodes.php include in destination!'));
